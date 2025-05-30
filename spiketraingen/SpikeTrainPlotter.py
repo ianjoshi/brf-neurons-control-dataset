@@ -3,15 +3,19 @@ import matplotlib.pyplot as plt
 import os
 
 class SpikeTrainPlotter:
-    def __init__(self, duration_ms=1000, output_dir='plots'):
+    def __init__(self, duration_ms, frequency, amplitude, output_dir='plots'):
         """
         Initializes the plotter.
 
         Parameters:
         - duration_ms: Duration of the spike train in milliseconds.
-         - output_dir: Directory to save plots.
+        - frequency (float): Frequency in Hz.
+        - amplitude (int): Number of spikes per cycle.
+        - output_dir: Directory to save plots.
         """
         self.duration_ms = duration_ms
+        self.frequency = frequency
+        self.amplitude = amplitude
         self.output_dir = output_dir
 
         # Set default plot style
@@ -30,6 +34,7 @@ class SpikeTrainPlotter:
         Returns:
         - None
         """
+        full_title = f"{title} - Freq: {self.frequency}Hz, Amp: {self.amplitude}"
         plt.figure(figsize=(10, 2))
         time_axis = np.arange(len(spike_vector))
         plt.step(time_axis, spike_vector, where='post', linewidth=0.8)
@@ -37,7 +42,7 @@ class SpikeTrainPlotter:
         plt.xlim(0, self.duration_ms)
         plt.xlabel("Time (ms)")
         plt.ylabel("Spike (0/1)")
-        plt.title(title)
+        plt.title(full_title)
         plt.tight_layout()
         self._save(title)
 
@@ -49,6 +54,7 @@ class SpikeTrainPlotter:
         - spike_times (np.ndarray): List or array of spike times (in ms).
         - title (str): Title for the plot and filename.
         """
+        full_title = f"{title} - Freq: {self.frequency}Hz, Amp: {self.amplitude}"
         plt.figure(figsize=(10, 2))
         for spike_time in spike_times:
             plt.axvline(x=spike_time, color='black', linewidth=0.8)
@@ -56,7 +62,7 @@ class SpikeTrainPlotter:
         plt.xlim(0, self.duration_ms)
         plt.xlabel("Time (ms)")
         plt.ylabel("Spike")
-        plt.title(title)
+        plt.title(full_title)
         plt.tight_layout()
         self._save(title)
 
@@ -67,7 +73,7 @@ class SpikeTrainPlotter:
         Parameters:
         - title: Title used to generate filename.
         """
-        filename = f"{title.replace(' ', '_').lower()}.png"
+        filename = f"{title.replace(' ', '_').lower()}_f{self.frequency}_a{self.amplitude}.png"
         filepath = os.path.join(self.output_dir, filename)
         plt.savefig(filepath)
         print(f"Saved plot to: {filepath}")
