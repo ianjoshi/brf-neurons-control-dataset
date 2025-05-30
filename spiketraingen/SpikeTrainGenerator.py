@@ -88,14 +88,17 @@ class SpikeTrainGenerator:
 
         Parameters:
         - spikes (np.ndarray): The spike train to save (either binary or event-based).
-        - mode (string): The type of spike train ('binary' or 'event').
+        - mode (str): The type of spike train ('binary' or 'event').
 
         Returns:
         - None
         """
+        mode_dir = os.path.join(self.output_dir, mode)
+        os.makedirs(mode_dir, exist_ok=True)
+
         # Construct a descriptive filename
         filename = f"spike_f{int(self.frequency)}_a{self.amplitude}_{mode}.npy"
-        filepath = os.path.join(self.output_dir, filename)
+        filepath = os.path.join(mode_dir, filename)
 
         # Save the spike train as .npy
         np.save(filepath, spikes)
